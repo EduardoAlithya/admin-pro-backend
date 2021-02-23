@@ -6,17 +6,14 @@ const cors = require('cors')//4
 const app = express();//1
 // configurar cors
 app.use(cors());//4
+// lectura del body (post) 5
+app.use( express.json() );
 // conectar db
 dbConnection();//2
 
-
-
-app.get('/', (req, res) => {
-    res.json({
-        ok: 'true',
-        message: 'hola mundo'
-    });
-});
+//rutas 6
+app.use( '/api/usuarios', require('./routes/usuarios') );
+app.use( '/api/login', require('./routes/auth') );
 
 app.listen (process.env.PORT, ()=> {
     console.log('corriendo server en puerto: ' + process.env.PORT );
