@@ -14,6 +14,10 @@ dbConnection();//2
 //rutas 6
 app.use( '/api/usuarios', require('./routes/usuarios') );
 app.use( '/api/login', require('./routes/auth') );
+app.use( '/api/hospitales', require('./routes/hospitales') );
+app.use( '/api/medicos', require('./routes/medicos') );
+app.use( '/api/todo', require('./routes/todo') );
+app.use( '/api/upload', require('./routes/upload') );
 
 app.listen (process.env.PORT, ()=> {
     console.log('corriendo server en puerto: ' + process.env.PORT );
