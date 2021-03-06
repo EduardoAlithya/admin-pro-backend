@@ -11,6 +11,9 @@ app.use( express.json() );
 // conectar db
 dbConnection();//2
 
+// Directorio Publico
+app.use( express.static('public') );
+
 //rutas 6
 app.use( '/api/usuarios', require('./routes/usuarios') );
 app.use( '/api/login', require('./routes/auth') );

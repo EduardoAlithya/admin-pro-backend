@@ -2,6 +2,7 @@ const { response } = require('express');
 const Usuario = require('../model/usuario');
 const bcryptjs = require('bcryptjs');
 const { generarJWT } = require('../helper/jwt');
+const { googleVerificar } = require('../helper/google-verificar');
 
 const login = async(req, res = response) => {
     console.log("llamada a login");
@@ -44,7 +45,52 @@ const login = async(req, res = response) => {
     }
 }
 
+const validarGoogleSignIn = async(req, res = response) => {
+    console.log("llamada a login google");
+    const googleToken = req.body.token;
+    try {
+        const { name, email, picture } = await googleVerificar(googleToken);
+        const usuarioDB = await Usuario.findOne({ email });
+
+        let usuario = {};
+
+        if (! usuarioDB ) {
+            usuario = new Usuario ({
+                nombre : name,
+                email: email,
+                img: picture,
+                password: '***',
+                google: true
+            });
+        } else {
+            usuario = usuarioDB;
+            usuario['google'] = true;
+        }
+
+        //save usuario
+
+        usuario.save();
+
+        // generate el Token -JWT
+
+        const token = await generarJWT( usuario.id );
+
+        res.status(200).json({
+            ok: true,
+            token
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'error tecnico revise el logs: ' + error
+        })
+    }
+}
+
 
 module.exports = {
-    login
+    login,
+    validarGoogleSignIn
 }
