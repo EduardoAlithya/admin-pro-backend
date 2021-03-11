@@ -16,7 +16,7 @@ const getHospitales = async(req, res = response) => {
             .populate('usuario', 'nombre')
             .skip( desde )
             .limit( 5 ),
-            Hospital.count()
+            Hospital.countDocuments()
             
         ]);
 
@@ -24,6 +24,47 @@ const getHospitales = async(req, res = response) => {
             ok: true,
             hospitales,
             total
+        })
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            message: "error tecnico sirvase revisar el logs : " + error 
+        })
+    }
+}
+
+const actualizarHospitales = async(req, res = response) => {
+    console.log('llamada a actualizarrHospitales');
+
+
+    try {
+        const uid = req.uid;
+        const id = req.params.id;
+        console.log(id);
+        console.log(uid);
+        const hospitalDB = await Hospital.findById({ _id: id });
+
+        if ( !hospitalDB ) {
+            return res.status(404).json(
+                {
+                    ok: false,
+                    msg: " No existe un hospital para esa id"
+                });
+        }
+
+
+
+         const cambioHospital = {
+             ...req.body,
+             usuario: uid
+         }
+
+         const hospitalActualizado = await Hospital.findByIdAndUpdate(id, cambioHospital, {new: true});
+         
+        res.status(200).json({
+            ok: true,
+            msg: 'actualizar hospital',
+            hospitalDB
         })
     } catch (error) {
         res.status(500).json({
@@ -59,31 +100,25 @@ const crearHospitales = async(req, res = response) => {
     }
 }
 
-const actualizarHospitales = async(req, res = response) => {
-    console.log('llamada a crearHospitales');
-    const { nombre, usuario } = req.body;
-
-    try {
-        res.status(200).json({
-            ok: true,
-            msg: "hola mundo"
-        })
-    } catch (error) {
-        res.status(500).json({
-            ok: false,
-            message: "error tecnico sirvase revisar el logs"
-        })
-    }
-}
-
 const borrarHospitales = async(req, res = response) => {
-    console.log('llamada a crearHospitales');
-    const { nombre, usuario } = req.body;
+    console.log('llamada a borrarHospitales');
+    const  uid = req.params.id;
 
     try {
-        res.status(200).json({
+        const hospitalDB = await Hospital.findOne({ _id: uid });
+        if ( !hospitalDB ) {
+            return res.status(404).json(
+                {
+                    ok: false,
+                    msg: " No existe un hospital para esa id"
+                });
+        }
+
+        const hospitalBorrado = await Hospital.findByIdAndRemove( uid );
+
+        res.json({
             ok: true,
-            msg: "hola mundo"
+            usuario: hospitalBorrado
         })
     } catch (error) {
         res.status(500).json({

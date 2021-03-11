@@ -89,8 +89,28 @@ const validarGoogleSignIn = async(req, res = response) => {
     }
 }
 
+const renewToken = async(req, res = response) => {
+    console.log("llamada a renew token");
 
+    const uid = req.uid
+    const token = await generarJWT(uid);
+
+    try {
+        res.status(200).json({
+            ok: true,
+            token
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'error tecnico revise el logs: ' + error
+        })
+    }
+}
 module.exports = {
     login,
-    validarGoogleSignIn
+    validarGoogleSignIn,
+    renewToken
 }
