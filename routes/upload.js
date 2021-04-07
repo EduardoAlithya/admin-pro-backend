@@ -14,7 +14,7 @@ console.log('route: upload');
 router.put('/:tipo/:id', validarJWT ,
 uploadFile
 )
-router.get('/:tipo/:img', validarJWT ,
+router.get('/:tipo/:img',
 getFile
 )
 

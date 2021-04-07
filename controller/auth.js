@@ -10,7 +10,7 @@ const login = async(req, res = response) => {
     try {
 
         const existeEmail = await Usuario.findOne({ email});
-
+        console.log(existeEmail);
         if (!existeEmail) {
             return res.status(400).json({
                 ok: false,
@@ -29,7 +29,7 @@ const login = async(req, res = response) => {
         }
 
         const token = await generarJWT(existeEmail._id);
-
+        
 
         res.status(200).json({
             ok: true,
@@ -94,11 +94,13 @@ const renewToken = async(req, res = response) => {
 
     const uid = req.uid
     const token = await generarJWT(uid);
-
+    const usuario = await Usuario.findById(req.uid);
+    console.log(usuario);
     try {
         res.status(200).json({
             ok: true,
-            token
+            token,
+            usuario: usuario
         })
 
     } catch (error) {

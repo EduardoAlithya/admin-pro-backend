@@ -78,7 +78,22 @@ const actualizarUsuario = async(req, res = response) => {
                 })
             }
         }
-        campos.email = email;
+
+        console.log(email);
+        
+        if (!usuarioDB.google) {
+            campos.email = email;
+        } else {
+            if ( usuarioDB.email !== email ) {
+                res.status(404).json({
+                    ok: false,
+                    message: "error tecnico sirvase revisar el logs:" + error
+                })
+            }
+        }
+
+        console.log(campos);
+
         const usuarioActualizado = await Usuario.findByIdAndUpdate( uid, campos, {new: true} );
 
       res.json({
